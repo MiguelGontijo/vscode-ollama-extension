@@ -1,0 +1,162 @@
+.conversation {
+    margin-bottom: 12px;
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.conversation-header {
+    padding: 10px 14px;
+    background: var(--vscode-input-background);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s ease;
+}
+
+.conversation-header:hover {
+    background: var(--vscode-list-hoverBackground);
+}
+
+.conversation-header .actions {
+    display: flex;
+    gap: 8px;
+}
+
+.conversation-header .delete {
+    opacity: 0.6;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.conversation-header .delete:hover {
+    opacity: 1;
+}
+
+.conversation-header .toggle {
+    min-width: 16px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.conversation.expanded .conversation-header .toggle {
+    transform: rotate(180deg);
+}
+
+.conversation-content {
+    padding: 12px;
+    display: none;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+    opacity: 0;
+    max-height: 0;
+}
+
+.conversation.expanded .conversation-content {
+    display: block;
+    opacity: 1;
+    max-height: none;
+}
+
+.prompt {
+    color: var(--vscode-foreground);
+    margin-bottom: 8px;
+    white-space: pre-wrap;
+}
+
+.response {
+    position: relative;
+    color: var(--vscode-textPreformat-foreground);
+    white-space: pre-wrap;
+    padding: 12px;
+    background: var(--vscode-textCodeBlock-background);
+    border-radius: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.response.done {
+    border-left: 3px solid var(--vscode-terminal-ansiGreen);
+    padding-right: 30px; /* Espaço para o indicador de conclusão */
+}
+
+.response-container {
+    position: relative;
+    margin-top: 8px;
+}
+
+.response-actions {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.response-container:hover .response-actions {
+    opacity: 1;
+}
+
+.copy-button {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.copy-button:hover {
+    background: var(--vscode-button-hoverBackground);
+}
+
+.copy-button.copied {
+    background: var(--vscode-terminal-ansiGreen);
+}
+
+.copy-button.error {
+    background: var(--vscode-terminal-ansiRed);
+}
+
+.copy-icon {
+    font-size: 14px;
+}
+
+.response.error {
+    border-left: 2px solid var(--vscode-terminal-ansiRed);
+}
+
+.done-indicator {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--vscode-terminal-ansiGreen);
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.response.done .done-indicator {
+    opacity: 1;
+}
+
+.loading {
+    padding: 12px;
+    color: var(--vscode-descriptionForeground);
+    font-style: italic;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}

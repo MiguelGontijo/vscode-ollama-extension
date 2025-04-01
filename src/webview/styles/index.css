@@ -1,0 +1,64 @@
+@import './chat.css';
+@import './input.css';
+@import './conversation.css';
+@import './modelSelector.css';
+
+body {
+    font-family: var(--vscode-font-family);
+    padding: 0;
+    margin: 0;
+    background: var(--vscode-editor-background);
+    color: var(--vscode-foreground);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: 8px;
+    gap: 12px;
+    box-sizing: border-box;
+}
+
+/* Estilos compartilhados e globais */
+.controls-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    padding-top: 4px;
+    box-sizing: border-box;
+}
+
+.send-button {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--vscode-button-background);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    opacity: 0.9;
+    flex-shrink: 0;
+}
+
+.send-button:hover {
+    opacity: 1;
+    transform: scale(1.05);
+}
+
+.send-button:active {
+    transform: scale(0.95);
+}
+
+.play-icon {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 6px 0 6px 10px;
+    border-color: transparent transparent transparent var(--vscode-button-foreground);
+    margin-left: 2px;
+}

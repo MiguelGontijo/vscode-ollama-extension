@@ -1,0 +1,106 @@
+{
+  "name": "migs-ia",
+  "displayName": "MigsIA",
+  "description": "Assistente de IA para desenvolvimento",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "migsIaSidebar",
+          "title": "MigsIA",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "migsIaSidebar": [
+        {
+          "id": "migs-ia.chatView",
+          "name": "MigsIA Chat",
+          "type": "webview"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Migs IA",
+      "properties": {
+        "migsIA.ollama.connectionType": {
+          "type": "string",
+          "enum": ["local", "remote"],
+          "default": "local",
+          "description": "Tipo de conexão com o Ollama"
+        },
+        "migsIA.ollama.remoteUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "URL da API remota do Ollama"
+        },
+        "migsIA.ollama.apiKey": {
+          "type": "string",
+          "description": "Chave de API para conexão remota"
+        },
+        "migsIA.ollama.timeout": {
+          "type": "number",
+          "default": 30000,
+          "description": "Tempo limite para requisições (ms)"
+        },
+        "migsIA.ollama.retryAttempts": {
+          "type": "number",
+          "default": 3,
+          "description": "Número de tentativas de reconexão"
+        },
+        "migsIA.ollama.temperature": {
+          "type": "number",
+          "default": 0.7,
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Temperatura para geração de respostas"
+        },
+        "migsIA.models.remote.anthropic.apiKey": {
+          "type": "string",
+          "description": "API Key para modelos Anthropic (Claude)"
+        },
+        "migsIA.models.remote.openrouter.apiKey": {
+          "type": "string",
+          "description": "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"
+        },
+        "migsIA.models.remote.deepseek.apiKey": {
+          "type": "string",
+          "description": "sk-93c557090e8c40e5b4297c6f917628e4"
+        },
+        "migsIA.models.connectionType": {
+          "type": "string",
+          "enum": ["local", "remote", "both"],
+          "default": "both",
+          "description": "Tipo de conexão para modelos"
+        },
+        "migsIA.environment": {
+          "type": "string",
+          "enum": ["development", "production"],
+          "default": "development",
+          "description": "Ambiente de execução"
+        },
+        "migsIA.debug": {
+          "type": "boolean",
+          "default": true,
+          "description": "Habilitar logs de debug"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^16.18.126",
+    "@types/vscode": "^1.75.0",
+    "typescript": "^4.9.5"
+  }
+}
