@@ -67,11 +67,11 @@
         },
         "migsIA.models.remote.openrouter.apiKey": {
           "type": "string",
-          "description": "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"
+          "description": "API Key para modelos OpenRouter"
         },
         "migsIA.models.remote.deepseek.apiKey": {
           "type": "string",
-          "description": "sk-93c557090e8c40e5b4297c6f917628e4"
+          "description": "API Key para modelos DeepSeek"
         },
         "migsIA.models.connectionType": {
           "type": "string",
