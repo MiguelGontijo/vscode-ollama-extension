@@ -5,13 +5,42 @@ export class ModelSelector {
     constructor(
         private modelGroups: ModelGroup[] = [],
         private providers: Provider[] = []
-    ) {}
+    ) {
+        console.log('ModelSelector constructor - modelGroups:', modelGroups);
+        console.log('ModelSelector constructor - providers:', providers);
+    }
 
     public render(): string {
+        // Extrair nomes de modelos por provider
+        const modelsByProvider: Record<string, string[]> = {
+            'ollama': [],
+            'anthropic': ['claude-3-opus', 'claude-3-sonnet', 'claude-3-haiku'],
+            'openrouter': ['gpt-4-turbo', 'claude-2', 'palm-2'],
+            'deepseek': ['deepseek-coder', 'deepseek-chat'],
+            'abacus': ['abacus-gpt4', 'abacus-claude']
+        };
+        
+        // Agrupar modelos por provider
+        for (const group of this.modelGroups) {
+            if (group.provider === 'ollama') {
+                modelsByProvider['ollama'].push(group.name);
+            }
+        }
+        
+        // Se não houver modelos para Ollama, adicionar mensagem de placeholder
+        if (modelsByProvider['ollama'].length === 0) {
+            modelsByProvider['ollama'] = ['Nenhum modelo encontrado'];
+        }
+        
+        console.log('ModelSelector render - modelsByProvider:', modelsByProvider);
+        
+        // Converter para JSON para usar no script
+        const modelsByProviderJson = JSON.stringify(modelsByProvider);
+
         return `
         <div class="model-selector-container">
             <select class="provider-select" id="provider-select">
-                <option value="ollama">Local Models</option>
+                <option value="ollama">Ollama Local</option>
                 <option value="anthropic">Anthropic</option>
                 <option value="openrouter">OpenRouter</option>
                 <option value="deepseek">DeepSeek</option>
@@ -22,14 +51,9 @@ export class ModelSelector {
             </select>
             <script>
             (function() {
-                // Dados de exemplo para modelos por provedor
-                const modelsByProvider = {
-                    ollama: ['llama2', 'mistral', 'codellama', 'phi', 'gemma'],
-                    anthropic: ['claude-3-opus', 'claude-3-sonnet', 'claude-3-haiku'],
-                    openrouter: ['gpt-4-turbo', 'claude-2', 'palm-2'],
-                    deepseek: ['deepseek-coder', 'deepseek-chat'],
-                    abacus: ['abacus-gpt4', 'abacus-claude']
-                };
+                // Usar os modelos reais do backend
+                const modelsByProvider = ${modelsByProviderJson};
+                console.log('ModelSelector script - modelsByProvider:', modelsByProvider);
                 
                 const providerSelect = document.getElementById('provider-select');
                 const modelSelect = document.getElementById('model-select');

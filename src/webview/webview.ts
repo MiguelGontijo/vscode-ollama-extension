@@ -80,15 +80,36 @@ export class WebView {
                     
                     window.addEventListener('message', (event) => {
                         const message = event.data;
+                        const conversationList = document.querySelector('.conversation-list');
+                        
                         switch (message.command) {
                             case 'addMessage':
                                 // Adicionar mensagem à conversa
-                                const conversationList = document.querySelector('.conversation-list');
                                 const messageElement = document.createElement('div');
                                 messageElement.className = 'message ' + message.message.role;
                                 messageElement.innerHTML = '<div class="message-content">' + message.message.content + '</div>';
                                 conversationList.appendChild(messageElement);
                                 conversationList.scrollTop = conversationList.scrollHeight;
+                                break;
+                            case 'startResponse':
+                                // Iniciar uma nova resposta do assistente
+                                const startResponseElement = document.createElement('div');
+                                startResponseElement.className = 'message assistant';
+                                startResponseElement.id = 'current-response';
+                                startResponseElement.innerHTML = '<div class="message-content"></div>';
+                                conversationList.appendChild(startResponseElement);
+                                conversationList.scrollTop = conversationList.scrollHeight;
+                                break;
+                            case 'updateResponse':
+                                // Atualizar a resposta atual
+                                const currentResponse = document.getElementById('current-response');
+                                if (currentResponse) {
+                                    const contentElement = currentResponse.querySelector('.message-content');
+                                    if (contentElement) {
+                                        contentElement.textContent = message.content;
+                                        conversationList.scrollTop = conversationList.scrollHeight;
+                                    }
+                                }
                                 break;
                             case 'error':
                                 // Mostrar erro

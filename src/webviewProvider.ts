@@ -46,20 +46,16 @@ export class OllamaWebviewProvider implements vscode.WebviewViewProvider {
             // Obter os modelos disponíveis
             console.log('Obtendo modelos...');
             const modelGroups = await this.ollamaService.getModels();
-            const providers = this.providerService.listProviders();
-            console.log(`Modelos obtidos: ${modelGroups.length}, Providers: ${providers.length}`);
-    
-            // Criar os URIs para os estilos - Verificar se os caminhos estão corretos
-            console.log('Criando URIs para estilos...');
-            const mediaPath = vscode.Uri.joinPath(this._extensionUri, 'media');
-            console.log(`Media path: ${mediaPath.fsPath}`);
+            console.log('Modelos obtidos:', JSON.stringify(modelGroups));
             
+            const providers = this.providerService.listProviders();
+            console.log('Providers obtidos:', JSON.stringify(providers));
+    
+            // Criar os URIs para os estilos
             const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css'));
             const styleChatUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'chat.css'));
             const styleInputUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'input.css'));
             const styleConversationUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'conversation.css'));
-            
-            console.log(`Style URIs: ${styleMainUri}, ${styleChatUri}, ${styleInputUri}, ${styleConversationUri}`);
     
             // Criar a webview
             const webviewInstance = new WebView(
@@ -99,9 +95,7 @@ export class OllamaWebviewProvider implements vscode.WebviewViewProvider {
         if (!this._view) {
             return;
         }
-
-        console.log(`Enviando mensagem para modelo ${model}: ${text}`);
-
+    
         // Enviar mensagem para a webview
         this._view.webview.postMessage({
             command: 'addMessage',
@@ -110,17 +104,22 @@ export class OllamaWebviewProvider implements vscode.WebviewViewProvider {
                 content: text
             }
         });
-
+    
+        // Iniciar resposta vazia
+        this._view.webview.postMessage({
+            command: 'startResponse'
+        });
+    
         try {
-            // Gerar resposta
-            const response = await this.ollamaService.generateCompletion(model, text);
-
-            // Enviar resposta para a webview
-            this._view.webview.postMessage({
-                command: 'addMessage',
-                message: {
-                    role: 'assistant',
-                    content: response
+            // Usar streaming para mostrar a resposta gradualmente
+            await this.ollamaService.streamResponse({
+                model,
+                prompt: text,
+                onUpdate: (response: string) => {
+                    this._view?.webview.postMessage({
+                        command: 'updateResponse',
+                        content: response
+                    });
                 }
             });
         } catch (error) {
