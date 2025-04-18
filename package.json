@@ -29,13 +29,7 @@
           "name": "Chat"
         }
       ]
-    },
-    "commands": [
-      {
-        "command": "migsIA.start",
-        "title": "Iniciar MigsIA"
-      }
-    ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

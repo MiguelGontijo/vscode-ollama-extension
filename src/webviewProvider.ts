@@ -50,13 +50,13 @@ export class OllamaWebviewProvider implements vscode.WebviewViewProvider {
             
             const providers = this.providerService.listProviders();
             console.log('Providers obtidos:', JSON.stringify(providers));
-    
+
             // Criar os URIs para os estilos
             const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css'));
             const styleChatUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'chat.css'));
             const styleInputUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'input.css'));
             const styleConversationUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'conversation.css'));
-    
+
             // Criar a webview
             const webviewInstance = new WebView(
                 modelGroups,
@@ -68,10 +68,10 @@ export class OllamaWebviewProvider implements vscode.WebviewViewProvider {
                     styleConversationUri: styleConversationUri.toString()
                 }
             );
-    
+
             // Renderizar a webview
             webview.html = webviewInstance.render();
-    
+
             // Configurar os event listeners
             this._setupEventListeners(webview);
         } catch (error) {
@@ -85,17 +85,19 @@ export class OllamaWebviewProvider implements vscode.WebviewViewProvider {
             console.log('Mensagem recebida:', message);
             switch (message.command) {
                 case 'sendMessage':
-                    await this._handleSendMessage(message.text, message.model);
+                    await this._handleSendMessage(message.text, message.model, message.provider);
                     break;
             }
         });
     }
 
-    private async _handleSendMessage(text: string, model: string) {
+    private async _handleSendMessage(text: string, model: string, provider: string = 'ollama') {
         if (!this._view) {
             return;
         }
-    
+
+        console.log(`Sending message to ${provider} model ${model}: ${text}`);
+
         // Enviar mensagem para a webview
         this._view.webview.postMessage({
             command: 'addMessage',
@@ -104,31 +106,50 @@ export class OllamaWebviewProvider implements vscode.WebviewViewProvider {
                 content: text
             }
         });
-    
+
         // Iniciar resposta vazia
         this._view.webview.postMessage({
             command: 'startResponse'
         });
-    
+
         try {
-            // Usar streaming para mostrar a resposta gradualmente
-            await this.ollamaService.streamResponse({
-                model,
-                prompt: text,
-                onUpdate: (response: string) => {
-                    this._view?.webview.postMessage({
-                        command: 'updateResponse',
-                        content: response
-                    });
+            if (provider === 'ollama') {
+                // Usar o OllamaService para modelos locais
+                await this.ollamaService.streamResponse({
+                    model,
+                    prompt: text,
+                    onUpdate: (response: string) => {
+                        this._view?.webview.postMessage({
+                            command: 'updateResponse',
+                            content: response
+                        });
+                    }
+                });
+            } else {
+                // Usar o ProviderService para modelos remotos
+                const client = this.providerService.getClient(provider);
+                if (!client) {
+                    throw new Error(`Provider ${provider} not configured`);
                 }
-            });
+
+                await client.streamCompletion({
+                    model,
+                    prompt: text,
+                    onUpdate: (response: string) => {
+                        this._view?.webview.postMessage({
+                            command: 'updateResponse',
+                            content: response
+                        });
+                    }
+                });
+            }
         } catch (error) {
             console.error('Error generating response:', error);
             
             // Enviar erro para a webview
             this._view.webview.postMessage({
                 command: 'error',
-                message: 'Failed to generate response. Please try again.'
+                message: `Failed to generate response: ${error}`
             });
         }
     }

@@ -14,23 +14,30 @@ export class ModelSelector {
         // Extrair nomes de modelos por provider
         const modelsByProvider: Record<string, string[]> = {
             'ollama': [],
-            'anthropic': ['claude-3-opus', 'claude-3-sonnet', 'claude-3-haiku'],
-            'openrouter': ['gpt-4-turbo', 'claude-2', 'palm-2'],
-            'deepseek': ['deepseek-coder', 'deepseek-chat'],
-            'abacus': ['abacus-gpt4', 'abacus-claude']
+            'anthropic': [],
+            'openrouter': []
         };
         
         // Agrupar modelos por provider
         for (const group of this.modelGroups) {
-            if (group.provider === 'ollama') {
-                modelsByProvider['ollama'].push(group.name);
+            if (!modelsByProvider[group.provider]) {
+                modelsByProvider[group.provider] = [];
             }
+            modelsByProvider[group.provider].push(group.name);
         }
         
-        // Se não houver modelos para Ollama, adicionar mensagem de placeholder
-        if (modelsByProvider['ollama'].length === 0) {
-            modelsByProvider['ollama'] = ['Nenhum modelo encontrado'];
-        }
+        // Se não houver modelos para um provider, adicionar mensagem de placeholder
+        Object.keys(modelsByProvider).forEach(provider => {
+            if (modelsByProvider[provider].length === 0) {
+                if (provider === 'anthropic') {
+                    modelsByProvider[provider] = ['Set Anthropic API Key (Ctrl+Shift+P > MigsIA: Set Anthropic API Key)'];
+                } else if (provider === 'openrouter') {
+                    modelsByProvider[provider] = ['Set OpenRouter API Key (Ctrl+Shift+P > MigsIA: Set OpenRouter API Key)'];
+                } else if (provider === 'ollama' && modelsByProvider[provider].length === 0) {
+                    modelsByProvider[provider] = ['No models found'];
+                }
+            }
+        });
         
         console.log('ModelSelector render - modelsByProvider:', modelsByProvider);
         
@@ -43,8 +50,6 @@ export class ModelSelector {
                 <option value="ollama">Ollama Local</option>
                 <option value="anthropic">Anthropic</option>
                 <option value="openrouter">OpenRouter</option>
-                <option value="deepseek">DeepSeek</option>
-                <option value="abacus">Abacus</option>
             </select>
             <select class="model-select" id="model-select">
                 <!-- Modelos serão carregados dinamicamente -->
@@ -71,8 +76,17 @@ export class ModelSelector {
                         const option = document.createElement('option');
                         option.value = model;
                         option.textContent = model;
+                        option.dataset.provider = selectedProvider;
                         modelSelect.appendChild(option);
                     });
+                    
+                    // Desabilitar o botão de envio se for uma mensagem de API key
+                    const sendButton = document.getElementById('send');
+                    if (sendButton) {
+                        const selectedOption = modelSelect.options[modelSelect.selectedIndex];
+                        const isApiKeyMessage = selectedOption && selectedOption.textContent.includes('API Key');
+                        sendButton.disabled = isApiKeyMessage;
+                    }
                 }
                 
                 // Atualizar modelos quando o provedor mudar

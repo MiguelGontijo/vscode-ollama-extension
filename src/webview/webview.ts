@@ -58,6 +58,7 @@ export class WebView {
                     const sendButton = document.getElementById('send');
                     const chatInput = document.querySelector('.chat-input');
                     const modelSelect = document.getElementById('model-select');
+                    const providerSelect = document.getElementById('provider-select');
                     
                     sendButton.addEventListener('click', () => {
                         const text = chatInput.value.trim();
@@ -65,7 +66,8 @@ export class WebView {
                             vscode.postMessage({
                                 command: 'sendMessage',
                                 text: text,
-                                model: modelSelect.value
+                                model: modelSelect.value,
+                                provider: providerSelect.value
                             });
                             chatInput.value = '';
                         }
