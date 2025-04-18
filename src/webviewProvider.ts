@@ -119,9 +119,10 @@ export class OllamaWebviewProvider implements vscode.WebviewViewProvider {
                     model,
                     prompt: text,
                     onUpdate: (response: string) => {
+                        // Formatar a resposta para Markdown
                         this._view?.webview.postMessage({
                             command: 'updateResponse',
-                            content: response
+                            content: this.formatResponseForMarkdown(response)
                         });
                     }
                 });
@@ -136,9 +137,10 @@ export class OllamaWebviewProvider implements vscode.WebviewViewProvider {
                     model,
                     prompt: text,
                     onUpdate: (response: string) => {
+                        // Formatar a resposta para Markdown
                         this._view?.webview.postMessage({
                             command: 'updateResponse',
-                            content: response
+                            content: this.formatResponseForMarkdown(response)
                         });
                     }
                 });
@@ -152,5 +154,13 @@ export class OllamaWebviewProvider implements vscode.WebviewViewProvider {
                 message: `Failed to generate response: ${error}`
             });
         }
+    }
+
+    // Método auxiliar para formatar a resposta para Markdown
+    private formatResponseForMarkdown(text: string): string {
+        // Detectar blocos de código e adicionar syntax highlighting
+        return text.replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+            return `\`\`\`${lang || ''}\n${code}\`\`\``;
+        });
     }
 }

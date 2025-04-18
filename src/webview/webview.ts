@@ -38,6 +38,9 @@ export class WebView {
             <link rel="stylesheet" href="${this.styleUris.styleChatUri}">
             <link rel="stylesheet" href="${this.styleUris.styleInputUri}">
             <link rel="stylesheet" href="${this.styleUris.styleConversationUri}">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/vs2015.min.css">
+            <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
         </head>
         <body>
             <div class="container">
@@ -59,6 +62,23 @@ export class WebView {
                     const chatInput = document.querySelector('.chat-input');
                     const modelSelect = document.getElementById('model-select');
                     const providerSelect = document.getElementById('provider-select');
+                    
+                    // Configurar marked para usar highlight.js
+                    marked.setOptions({
+                        highlight: function(code, lang) {
+                            if (lang && hljs.getLanguage(lang)) {
+                                return hljs.highlight(code, { language: lang }).value;
+                            }
+                            return hljs.highlightAuto(code).value;
+                        },
+                        breaks: true,
+                        gfm: true
+                    });
+                    
+                    // Função para renderizar Markdown
+                    function renderMarkdown(text) {
+                        return marked.parse(text);
+                    }
                     
                     sendButton.addEventListener('click', () => {
                         const text = chatInput.value.trim();
@@ -89,30 +109,54 @@ export class WebView {
                                 // Adicionar mensagem à conversa
                                 const messageElement = document.createElement('div');
                                 messageElement.className = 'message ' + message.message.role;
-                                messageElement.innerHTML = '<div class="message-content">' + message.message.content + '</div>';
+                                
+                                // Renderizar como Markdown apenas se for uma mensagem do assistente
+                                if (message.message.role === 'assistant') {
+                                    messageElement.innerHTML = '<div class="message-content markdown-content">' + 
+                                        renderMarkdown(message.message.content) + '</div>';
+                                } else {
+                                    messageElement.innerHTML = '<div class="message-content">' + 
+                                        message.message.content + '</div>';
+                                }
+                                
                                 conversationList.appendChild(messageElement);
                                 conversationList.scrollTop = conversationList.scrollHeight;
+                                
+                                // Aplicar highlight.js aos blocos de código
+                                messageElement.querySelectorAll('pre code').forEach((block) => {
+                                    hljs.highlightElement(block);
+                                });
                                 break;
+                                
                             case 'startResponse':
                                 // Iniciar uma nova resposta do assistente
                                 const startResponseElement = document.createElement('div');
                                 startResponseElement.className = 'message assistant';
                                 startResponseElement.id = 'current-response';
-                                startResponseElement.innerHTML = '<div class="message-content"></div>';
+                                startResponseElement.innerHTML = '<div class="message-content markdown-content"></div>';
                                 conversationList.appendChild(startResponseElement);
                                 conversationList.scrollTop = conversationList.scrollHeight;
                                 break;
+                                
                             case 'updateResponse':
                                 // Atualizar a resposta atual
                                 const currentResponse = document.getElementById('current-response');
                                 if (currentResponse) {
                                     const contentElement = currentResponse.querySelector('.message-content');
                                     if (contentElement) {
-                                        contentElement.textContent = message.content;
+                                        // Renderizar como Markdown
+                                        contentElement.innerHTML = renderMarkdown(message.content);
+                                        
+                                        // Aplicar highlight.js aos blocos de código
+                                        currentResponse.querySelectorAll('pre code').forEach((block) => {
+                                            hljs.highlightElement(block);
+                                        });
+                                        
                                         conversationList.scrollTop = conversationList.scrollHeight;
                                     }
                                 }
                                 break;
+                                
                             case 'error':
                                 // Mostrar erro
                                 vscode.window.showErrorMessage(message.message);
