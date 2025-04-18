@@ -1,0 +1,85 @@
+/* media/input.css */
+.input-section {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: var(--vscode-editor-background);
+    border-bottom: 1px solid var(--vscode-panel-border);
+}
+
+.chat-input {
+    width: 100%;
+    min-height: 60px;
+    max-height: 200px;
+    padding: 8px;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 4px;
+    resize: vertical;
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    line-height: 1.5;
+    overflow-y: auto;
+}
+
+.chat-input:focus {
+    outline: 1px solid var(--vscode-focusBorder);
+}
+
+.controls-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.model-selector-container {
+    display: flex;
+    gap: 8px;
+    flex: 1;
+}
+
+.provider-select, .model-select {
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 2px;
+    padding: 4px 8px;
+    font-size: 12px;
+    height: 28px;
+}
+
+.provider-select {
+    width: 40%;
+}
+
+.model-select {
+    width: 60%;
+}
+
+.send-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    background-color: var(--vscode-button-background);
+    border: none;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.send-button:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}
+
+.play-icon {
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-bottom: 6px solid transparent;
+    border-left: 10px solid var(--vscode-button-foreground);
+    margin-left: 2px;
+}

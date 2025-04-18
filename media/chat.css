@@ -1,0 +1,21 @@
+/* media/chat.css */
+.message {
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+}
+
+.message.user {
+    background-color: var(--vscode-editor-inactiveSelectionBackground);
+    align-self: flex-end;
+}
+
+.message.assistant {
+    background-color: var(--vscode-editor-selectionBackground);
+    align-self: flex-start;
+}
+
+.message-content {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
