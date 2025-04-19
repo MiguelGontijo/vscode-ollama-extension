@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import { OllamaWebviewProvider } from './webviewProvider';
 import { ProviderService } from './services/ProviderService';
 import { SecretStorageService } from './services/SecretStorageService';
+import { ConversationService } from './services/ConversationService';
 import { apiKeyCommands } from './config/apiKeys';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -14,6 +15,10 @@ export function activate(context: vscode.ExtensionContext) {
     // Inicializar o ProviderService e configurar o SecretStorageService
     const providerService = ProviderService.getInstance();
     providerService.setSecretStorage(secretStorage);
+    
+    // Inicializar o ConversationService
+    const conversationService = ConversationService.getInstance();
+    conversationService.setContext(context);
     
     // Registrar o provedor de webview
     const provider = new OllamaWebviewProvider(context.extensionUri);
@@ -43,6 +48,27 @@ export function activate(context: vscode.ExtensionContext) {
         
         context.subscriptions.push(command);
     });
+    
+    // Registrar comandos para gerenciar conversas
+    const newConversationCommand = vscode.commands.registerCommand('migsIA.newConversation', () => {
+        provider.createNewConversation();
+    });
+    
+    const clearConversationsCommand = vscode.commands.registerCommand('migsIA.clearConversations', async () => {
+        const confirmed = await vscode.window.showWarningMessage(
+            'Are you sure you want to clear all conversations? This cannot be undone.',
+            { modal: true },
+            'Yes'
+        );
+        
+        if (confirmed === 'Yes') {
+            conversationService.clearAllConversations();
+            provider.refreshWebview();
+            vscode.window.showInformationMessage('All conversations cleared');
+        }
+    });
+    
+    context.subscriptions.push(newConversationCommand, clearConversationsCommand);
     
     console.log('Extensão MigsIA ativada com sucesso!');
 }

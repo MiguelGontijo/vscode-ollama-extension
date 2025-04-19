@@ -1,9 +1,18 @@
 /* media/conversation.css */
 .conversation-list {
-    flex: 1;
+    flex: 1; /* Ocupa o espaço restante no conversation-container */
     overflow-y: auto;
     padding: 10px;
+    padding-left: 50px; /* Espaço para o botão de toggle */
     display: flex;
     flex-direction: column;
     background-color: var(--migs-black);
+}
+
+/* Adicionar separação visual entre as seções */
+.section-separator {
+    height: 1px;
+    background-color: #444;
+    opacity: 0.3;
+    margin: 5px 0;
 }

@@ -1,0 +1,181 @@
+/* media/sidebar.css */
+/* Estilos para a barra lateral e o botão de toggle */
+.container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100vh;
+    overflow: hidden; /* Evitar barras de rolagem no container principal */
+}
+
+/* Container 1: Input e botões da conversa (topo) */
+.input-container {
+    padding: 10px;
+    background-color: var(--migs-black);
+    border-bottom: 1px solid #444;
+    z-index: 5; /* Manter acima da conversa */
+}
+
+/* Container 2: Conversa atual (abaixo do input) */
+.conversation-container {
+    flex: 1; /* Ocupa o espaço restante */
+    display: flex;
+    flex-direction: column;
+    position: relative; /* Para posicionar a sidebar e o botão */
+    overflow: hidden; /* Para conter a lista de mensagens */
+}
+
+/* Container 3: Barra lateral (sobrepõe 70% do container de conversa) */
+.sidebar {
+    position: absolute;
+    top: 0;
+    left: -70%; /* Começa escondida */
+    width: 70%;
+    height: 100%;
+    background: linear-gradient(to right, #2D2D2D, #1E1E1E);
+    border-right: 1px solid #444;
+    overflow-y: auto;
+    transition: left 0.3s ease;
+    z-index: 10; /* Acima da lista de conversas */
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.sidebar.open {
+    left: 0; /* Mostra a sidebar */
+}
+
+/* Botão de toggle como bolinha com três tracinhos, dentro do container de conversa */
+.sidebar-toggle {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: #444;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 11; /* Acima da sidebar */
+    transition: background-color 0.3s ease;
+}
+
+.sidebar-toggle.open {
+    background-color: #666;
+}
+
+.toggle-icon {
+    width: 14px;
+    height: 2px;
+    background-color: white;
+    position: relative;
+}
+
+.toggle-icon::before,
+.toggle-icon::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 2px;
+    background-color: white;
+    left: 0;
+}
+
+.toggle-icon::before {
+    top: -5px;
+}
+
+.toggle-icon::after {
+    top: 5px;
+}
+
+/* Conteúdo da Sidebar */
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid #444;
+}
+
+.sidebar-header h2 {
+    margin: 0;
+    color: #ccc;
+    font-size: 1.2em;
+}
+
+.new-conversation-btn {
+    background-color: #555;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 16px;
+    line-height: 1;
+}
+
+.new-conversation-btn:hover {
+    background-color: #666;
+}
+
+.conversations-list {
+    padding: 10px;
+    overflow-y: auto;
+    max-height: calc(100% - 60px);
+}
+
+.conversation-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 4px;
+    background-color: #3E3E3E;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.conversation-item:hover {
+    background-color: #555;
+}
+
+.conversation-item.active {
+    background-color: #666;
+}
+
+.conversation-title {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.delete-conversation {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-conversation:hover {
+    color: white;
+}
+
+.empty-state {
+    color: #888;
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+}

@@ -3,8 +3,7 @@
     display: flex;
     flex-direction: column;
     padding: 10px;
-    background-color: var(--vscode-editor-background);
-    border-bottom: 1px solid var(--vscode-panel-border);
+    padding-left: 10px; /* Mantém o padding normal */
 }
 
 .chat-input {
@@ -12,19 +11,20 @@
     min-height: 60px;
     max-height: 200px;
     padding: 8px;
-    background-color: var(--vscode-input-background);
+    background-color: var(--migs-dark-gray);
     color: var(--vscode-input-foreground);
-    border: 1px solid var(--vscode-input-border);
+    border: 1px solid #444;
     border-radius: 4px;
     resize: vertical;
     font-family: var(--vscode-font-family);
     font-size: var(--vscode-font-size);
     line-height: 1.5;
     overflow-y: auto;
+    margin-bottom: 8px;
 }
 
 .chat-input:focus {
-    outline: 1px solid var(--vscode-focusBorder);
+    outline: 1px solid #666;
 }
 
 .controls-container {
@@ -41,9 +41,9 @@
 }
 
 .provider-select, .model-select {
-    background-color: var(--vscode-input-background);
+    background-color: var(--migs-dark-gray);
     color: var(--vscode-input-foreground);
-    border: 1px solid var(--vscode-input-border);
+    border: 1px solid #444;
     border-radius: 2px;
     padding: 4px 8px;
     font-size: 12px;
@@ -65,14 +65,14 @@
     width: 28px;
     height: 28px;
     border-radius: 4px;
-    background-color: var(--vscode-button-background);
+    background-color: #555;
     border: none;
     cursor: pointer;
     flex-shrink: 0;
 }
 
 .send-button:hover {
-    background-color: var(--vscode-button-hoverBackground);
+    background-color: #666;
 }
 
 .play-icon {
@@ -80,6 +80,15 @@
     height: 0;
     border-top: 6px solid transparent;
     border-bottom: 6px solid transparent;
-    border-left: 10px solid var(--vscode-button-foreground);
+    border-left: 10px solid white;
     margin-left: 2px;
+}
+
+.send-button:disabled {
+    background-color: #333;
+    cursor: not-allowed;
+}
+
+.send-button:disabled .play-icon {
+    border-left-color: #888;
 }
