@@ -38,7 +38,7 @@ export class WebView {
             <link rel="stylesheet" href="${this.styleUris.styleChatUri}">
             <link rel="stylesheet" href="${this.styleUris.styleInputUri}">
             <link rel="stylesheet" href="${this.styleUris.styleConversationUri}">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/vs2015.min.css">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
             <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
         </head>
@@ -80,9 +80,20 @@ export class WebView {
                         return marked.parse(text);
                     }
                     
+                    // Função para criar o indicador de carregamento
+                    function createLoadingIndicator() {
+                        const loadingIndicator = document.createElement('div');
+                        loadingIndicator.className = 'loading-indicator';
+                        loadingIndicator.innerHTML = '<div class="loading-dots"><div class="loading-dot"></div><div class="loading-dot"></div><div class="loading-dot"></div></div>';
+                        return loadingIndicator;
+                    }
+                    
                     sendButton.addEventListener('click', () => {
                         const text = chatInput.value.trim();
                         if (text) {
+                            // Desabilitar o botão de envio durante o processamento
+                            sendButton.disabled = true;
+                            
                             vscode.postMessage({
                                 command: 'sendMessage',
                                 text: text,
@@ -133,7 +144,16 @@ export class WebView {
                                 const startResponseElement = document.createElement('div');
                                 startResponseElement.className = 'message assistant';
                                 startResponseElement.id = 'current-response';
-                                startResponseElement.innerHTML = '<div class="message-content markdown-content"></div>';
+                                
+                                // Adicionar o indicador de carregamento
+                                const loadingIndicator = createLoadingIndicator();
+                                startResponseElement.appendChild(loadingIndicator);
+                                
+                                // Adicionar o contêiner para o conteúdo da resposta
+                                const contentContainer = document.createElement('div');
+                                contentContainer.className = 'message-content markdown-content';
+                                startResponseElement.appendChild(contentContainer);
+                                
                                 conversationList.appendChild(startResponseElement);
                                 conversationList.scrollTop = conversationList.scrollHeight;
                                 break;
@@ -142,6 +162,12 @@ export class WebView {
                                 // Atualizar a resposta atual
                                 const currentResponse = document.getElementById('current-response');
                                 if (currentResponse) {
+                                    // Remover o indicador de carregamento se for a primeira atualização
+                                    const loadingIndicator = currentResponse.querySelector('.loading-indicator');
+                                    if (loadingIndicator) {
+                                        currentResponse.removeChild(loadingIndicator);
+                                    }
+                                    
                                     const contentElement = currentResponse.querySelector('.message-content');
                                     if (contentElement) {
                                         // Renderizar como Markdown
@@ -160,6 +186,13 @@ export class WebView {
                             case 'error':
                                 // Mostrar erro
                                 vscode.window.showErrorMessage(message.message);
+                                // Reativar o botão de envio
+                                sendButton.disabled = false;
+                                break;
+                                
+                            case 'responseComplete':
+                                // Reativar o botão de envio quando a resposta estiver completa
+                                sendButton.disabled = false;
                                 break;
                         }
                     });

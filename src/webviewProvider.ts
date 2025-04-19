@@ -145,6 +145,11 @@ export class OllamaWebviewProvider implements vscode.WebviewViewProvider {
                     }
                 });
             }
+            
+            // Notificar que a resposta está completa
+            this._view.webview.postMessage({
+                command: 'responseComplete'
+            });
         } catch (error) {
             console.error('Error generating response:', error);
             

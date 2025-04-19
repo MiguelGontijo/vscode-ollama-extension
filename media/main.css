@@ -13,3 +13,57 @@ body {
     flex-direction: column;
     height: 100vh;
 }
+
+/* Tema laranja/preto */
+:root {
+    --migs-orange-primary: #FF8C00;
+    --migs-orange-secondary: #FFA500;
+    --migs-orange-light: #FFD700;
+    --migs-orange-dark: #FF4500;
+    --migs-black: #1E1E1E;
+    --migs-dark-gray: #2D2D2D;
+    --migs-light-gray: #3E3E3E;
+}
+
+/* Animação de carregamento */
+.loading-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.loading-dots {
+    display: flex;
+    align-items: center;
+}
+
+.loading-dot {
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+    border-radius: 50%;
+    background-color: var(--migs-orange-primary);
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.loading-dot:nth-child(2) {
+    animation-delay: 0.2s;
+    background-color: var(--migs-orange-secondary);
+}
+
+.loading-dot:nth-child(3) {
+    animation-delay: 0.4s;
+    background-color: var(--migs-orange-light);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(0.8);
+        opacity: 0.6;
+    }
+    50% {
+        transform: scale(1.2);
+        opacity: 1;
+    }
+}
